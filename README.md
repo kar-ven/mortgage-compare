@@ -7,4 +7,11 @@ A simple but intuitive tool to:
 - Visualise the interest paid and total months to repay
 - Impact of duration due to extra payments
 
-Link to tool [here](https://kar-ven.github.io/mortgage-compare/)
+## Link to tool [here](https://kar-ven.github.io/mortgage-compare/)
+
+# Preview
+
+![Input fields](static/preview1.png "Input fields")
+![Results](static/preview1.png "Results")
+![Amortization table](static/preview1.png "Amortization table")
+
