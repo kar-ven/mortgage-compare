@@ -131,26 +131,30 @@
       line-height: 1.6;
       font-size: 0.9rem;
     }
-    .lang-buttons {
+    #lang-buttons {
       position: fixed;
       top: 10px;
       right: 10px;
-      z-index: 1000;
+      z-index: 9999;
+      display: flex;
+      gap: 4px;
+      background-color: rgba(0, 0, 0, 0.05);
+      padding: 4px 6px;
+      border-radius: 4px;
     }
 
-    .lang-buttons button {
-      font-size: 12px;
-      margin-left: 4px;
-      padding: 4px 6px;
+    #lang-buttons button {
       background-color: #333;
       color: #fff;
       border: none;
-      border-radius: 3px;
+      padding: 4px 6px;
+      font-size: 12px;
       cursor: pointer;
-      opacity: 0.85;
+      border-radius: 3px;
+      transition: background-color 0.3s;
     }
 
-    .lang-buttons button:hover {
+    #lang-buttons button:hover {
       background-color: #000;
     }
     #google_translate_element {
@@ -159,16 +163,14 @@
   </style>
 </head>
 <body>
-    <div id="lang-buttons">
-    <button onclick="translateTo('english')">EN</button>
-    <button onclick="translateTo('dutch')">NL</button>
-    <button onclick="translateTo('german')">DE</button>
-    <button onclick="translateTo('french')">FR</button>
-  </div>
-
- <div id="google_translate_element"></div>
-
   <div class="container">
+    <div id="lang-buttons">
+      <button onclick="translateTo('english')">EN</button>
+      <button onclick="translateTo('dutch')">NL</button>
+      <button onclick="translateTo('german')">DE</button>
+      <button onclick="translateTo('french')">FR</button>
+    </div>
+    <div id="google_translate_element"></div>
     <h2>Mortgage Comparison Tool</h2>
     <div class="row">
       <div class="half">
