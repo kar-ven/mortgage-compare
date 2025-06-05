@@ -12,6 +12,6 @@ A simple but intuitive tool to:
 # Preview
 
 ![Input fields](static/preview1.png "Input fields")
-![Results](static/preview1.png "Results")
-![Amortization table](static/preview1.png "Amortization table")
+![Results](static/preview2.png "Results")
+![Amortization table](static/preview3.png "Amortization table")
 
