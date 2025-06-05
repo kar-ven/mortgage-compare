@@ -1,0 +1,369 @@
+<!-- Full HTML with end date and refined effective rate and fixed chart destroy -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mortgage Amortization Tool</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --accent: #4a90e2;
+      --background: #f7f9fb;
+      --card-bg: #ffffff;
+      --text-main: #333;
+      --muted: #777;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--background);
+      color: var(--text-main);
+    }
+    .container {
+      max-width: 960px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    h2, h3, h4 {
+      margin-top: 0;
+    }
+    fieldset {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    legend {
+      font-weight: bold;
+      padding: 0 0.5rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .half {
+      flex: 1;
+      min-width: 260px;
+    }
+    .flex-results {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .flex-results > div {
+      flex: 1;
+      min-width: 260px;
+      background: #eef3f9;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+    }
+    th, td {
+      padding: 0.75rem 1rem;
+      border: 1px solid #ddd;
+      text-align: right;
+    }
+    th {
+      background: #f0f0f0;
+    }
+    canvas {
+      max-width: 100%;
+      margin-top: 2rem;
+    }
+    button {
+      display: block;
+      margin: 2rem auto 1rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      color: white;
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s ease-in-out;
+    }
+    button:hover {
+      background: #3f7ad6;
+    }
+    @media (max-width: 600px) {
+      .row, .flex-results {
+        flex-direction: column;
+      }
+    }
+    .section {
+      margin-top: 2rem;
+    }
+    .section h3 {
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 0.5rem;
+    }
+    #readme {
+      margin-top: 3rem;
+      padding: 1rem;
+      background: #f1f5f9;
+      border-radius: 8px;
+      line-height: 1.6;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Mortgage Amortization Tool</h2>
+    <div class="row">
+      <div class="half">
+        <fieldset>
+          <legend>Loan Details (A)</legend>
+          <label>Mortgage Amount (€):</label>
+          <input type="number" id="amountA" value="362000" />
+          <label>Interest Rate (% yearly):</label>
+          <input type="number" step="0.01" id="rateA" value="3.87" />
+          <label>Loan Duration (years):</label>
+          <input type="number" id="yearsA" value="30" />
+          <label>Start Date (YYYY-MM):</label>
+          <input type="month" id="startDateA" value="2023-08" />
+          <label>Extra Payment (€):</label>
+          <input type="number" id="extraA" value="18000" />
+          <label>Extra Payment Month #:</label>
+          <input type="number" id="extraMonthA" value="21" />
+        </fieldset>
+      </div>
+      <div class="half">
+        <fieldset>
+          <legend>Comparison Mortgage (B)</legend>
+          <label>Mortgage Amount (€):</label>
+          <input type="number" id="amountB" value="332000" />
+          <label>Interest Rate (% yearly):</label>
+          <input type="number" step="0.01" id="rateB" value="3.34" />
+          <label>Loan Duration (years):</label>
+          <input type="number" id="yearsB" value="22" />
+          <label>Start Date (YYYY-MM):</label>
+          <input type="month" id="startDateB" value="2025-06" />
+          <label>Extra Payment (€):</label>
+          <input type="number" id="extraB" value="0" />
+          <label>Extra Payment Month #:</label>
+          <input type="number" id="extraMonthB" value="0" />
+        </fieldset>
+      </div>
+    <div id="readme">
+      <h4>README – User Guide</h4>
+      <ul>
+        <li><strong>Mortgage Value (€):</strong> Total loan amount to be borrowed.</li>
+        <li><strong>Interest Rate (%):</strong> Nominal yearly interest rate.</li>
+        <li><strong>Duration (Years):</strong> The original term of the loan.</li>
+        <li><strong>Start Date:</strong> When the mortgage begins (for payoff calculation).</li>
+        <li><strong>Extra Payment:</strong> Optional lump-sum payment to be made.</li>
+        <li><strong>Extra Payment Month:</strong> When in the loan term the extra payment is made.</li>
+        <li><strong>Results:</strong> Monthly payments, total interest, months to pay off, payoff date, and interest savings.</li>
+        <li><strong>Charts:</strong> Visualize total interest comparison and mortgage balance drop over time.</li>
+        <li><strong>Compare Scenarios:</strong> Add and compare up to 2 different mortgage scenarios to see differences in interest, payoff time, and savings.</li>
+        <li><strong>Extra Payments Strategy:</strong> See how one-time extra payments can affect total interest and term length.</li>
+      </ul>
+    </div>
+    </div>
+    <button id="calculate">Calculate</button>
+    <fieldset>
+      <legend>Results</legend>
+      <div class="flex-results" id="results"></div>
+    </fieldset>
+    <canvas id="savingsChart"></canvas>
+    <div id="yearlyTable"></div>
+  </div>
+  <script>
+    function calcMonthlyPayment(P, r, n) {
+      return P * r / (1 - Math.pow(1 + r, -n));
+    }
+    function formatEuro(amount) {
+      return '€ ' + amount.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function calculateScenario(id) {
+      const amount = parseFloat(document.getElementById('amount' + id).value) || 0;
+      const annualRate = (parseFloat(document.getElementById('rate' + id).value) || 0) / 100;
+      const years = parseInt(document.getElementById('years' + id).value) || 0;
+      const extra = parseFloat(document.getElementById('extra' + id).value) || 0;
+      const extraMonth = parseInt(document.getElementById('extraMonth' + id).value) || 0;
+      const startDateStr = document.getElementById('startDate' + id)?.value || "2023-01";
+      const startDate = new Date(startDateStr + "-01");
+
+      const months = years * 12;
+      const monthlyRate = annualRate / 12;
+      let balance = amount;
+      let totalPaid = 0;
+      let currentMonth = 0;
+      let yearlyData = [];
+      let totalInterestPaid = 0;
+      let basePayment = calcMonthlyPayment(amount, monthlyRate, months);
+      let interestByYear = [];
+      let principalByYear = [];
+      let yearIndex = 0;
+
+      while (balance > 0.005 && currentMonth < 1000) {
+        const interest = balance * monthlyRate;
+        let principal = basePayment - interest;
+
+        if (currentMonth === extraMonth && extra > 0) {
+          principal += extra;
+          totalPaid += extra;
+        }
+
+        if (principal > balance) principal = balance;
+
+        balance -= principal;
+        totalInterestPaid += interest;
+        totalPaid += basePayment;
+        currentMonth++;
+
+        if (!interestByYear[yearIndex]) {
+          interestByYear[yearIndex] = 0;
+          principalByYear[yearIndex] = 0;
+        }
+
+        interestByYear[yearIndex] += interest;
+        principalByYear[yearIndex] += principal;
+
+        if (currentMonth % 12 === 0 || balance <= 0.005) {
+          yearlyData.push({
+            year: yearIndex + 1,
+            remaining: Math.max(0, balance),
+            date: new Date(startDate.getFullYear(), startDate.getMonth() + currentMonth)
+              .toISOString().slice(0, 7),
+          });
+          yearIndex++;
+        }
+      }
+
+      let avgEffectiveAnnualRate = 0;
+      for (let i = 0; i < yearIndex; i++) {
+        const avgBalance = amount - (principalByYear[i] / 2);
+        const effRate = (interestByYear[i] / avgBalance) * 100;
+        avgEffectiveAnnualRate += effRate;
+      }
+      avgEffectiveAnnualRate /= yearIndex;
+
+      const endDate = new Date(startDate.getFullYear(), startDate.getMonth() + currentMonth);
+
+      return {
+        basePayment,
+        interestPaid: totalPaid - amount,
+        monthsToPayOff: currentMonth,
+        nominalMonthlyRate: monthlyRate * 100,
+        nominalAnnualRate: monthlyRate * 12 * 100,
+        effectiveAnnualRate: avgEffectiveAnnualRate,
+        yearlyData,
+        endDate
+      };
+    }
+
+    document.getElementById('calculate').addEventListener('click', function () {
+      const resultA = calculateScenario('A');
+      const resultB = calculateScenario('B');
+      document.getElementById('results').innerHTML = `
+        <div><h4>Scenario A</h4>
+        <p><strong>Monthly Payment:</strong> ${formatEuro(resultA.basePayment)}</p>
+        <p><strong>Total Interest:</strong> ${formatEuro(resultA.interestPaid)}</p>
+        <p><strong>Months to Pay Off:</strong> ${resultA.monthsToPayOff}</p>
+        <p><strong>Loan Ends:</strong> ${resultA.endDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</p>
+        <p><strong>Nominal Monthly Rate:</strong> ${resultA.nominalMonthlyRate.toFixed(4)}%</p>
+        <p><strong>Nominal Annual Rate:</strong> ${resultA.nominalAnnualRate.toFixed(4)}%</p>
+        <p><strong>Effective Avg Annual Rate:</strong> ${resultA.effectiveAnnualRate.toFixed(4)}%</p>
+        </div>
+        <div><h4>Scenario B</h4>
+        <p><strong>Monthly Payment:</strong> ${formatEuro(resultB.basePayment)}</p>
+        <p><strong>Total Interest:</strong> ${formatEuro(resultB.interestPaid)}</p>
+        <p><strong>Months to Pay Off:</strong> ${resultB.monthsToPayOff}</p>
+        <p><strong>Loan Ends:</strong> ${resultB.endDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</p>
+        <p><strong>Nominal Monthly Rate:</strong> ${resultB.nominalMonthlyRate.toFixed(4)}%</p>
+        <p><strong>Nominal Annual Rate:</strong> ${resultB.nominalAnnualRate.toFixed(4)}%</p>
+        <p><strong>Effective Avg Annual Rate:</strong> ${resultB.effectiveAnnualRate.toFixed(4)}%</p>
+        <p><strong>Interest Saved:</strong> ${formatEuro(resultA.interestPaid - resultB.interestPaid)}</p>
+        </div>`;
+
+      const ctx = document.getElementById('savingsChart').getContext('2d');
+      if (window.savingsChart instanceof Chart) window.savingsChart.destroy();
+      window.savingsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Scenario A', 'Scenario B'],
+          datasets: [
+            {
+              label: 'Total Interest (€)',
+              data: [resultA.interestPaid, resultB.interestPaid],
+              backgroundColor: ['#8884d8', '#82ca9d'],
+              yAxisID: 'y'
+            },
+            {
+              label: 'Months to Pay Off',
+              data: [resultA.monthsToPayOff, resultB.monthsToPayOff],
+              backgroundColor: ['#ffbb28', '#ff8042'],
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              position: 'left',
+              title: {
+                display: true,
+                text: 'Interest (€)'
+              }
+            },
+            y1: {
+              beginAtZero: true,
+              position: 'right',
+              grid: {
+                drawOnChartArea: false
+              },
+              title: {
+                display: true,
+                text: 'Months'
+              }
+            }
+          }
+        }
+      });
+
+      let tableHtml = '<h3>Remaining Balance by Year</h3><table><tr><th>Year</th><th>Date</th><th>Remaining (A)</th><th>Remaining (B)</th></tr>';
+      const maxYears = Math.max(resultA.yearlyData.length, resultB.yearlyData.length);
+      for (let i = 0; i < maxYears; i++) {
+        tableHtml += `<tr>
+          <td>${i + 1}</td>
+          <td>${resultA.yearlyData[i]?.date || resultB.yearlyData[i]?.date || '-'}</td>
+          <td>${resultA.yearlyData[i]?.remaining.toLocaleString('nl-NL', { minimumFractionDigits: 2 }) || '-'}</td>
+          <td>${resultB.yearlyData[i]?.remaining.toLocaleString('nl-NL', { minimumFractionDigits: 2 }) || '-'}</td>
+        </tr>`;
+      }
+      tableHtml += '</table>';
+      document.getElementById('yearlyTable').innerHTML = tableHtml;
+    });
+  </script>
+</body>
+</html>
