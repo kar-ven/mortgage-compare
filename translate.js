@@ -1,5 +1,6 @@
 function translateTo(language) {
   const languages = {
+    english: 'en',
     dutch: 'nl',
     german: 'de',
     french: 'fr',
